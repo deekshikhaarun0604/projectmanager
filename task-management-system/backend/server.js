@@ -10,7 +10,9 @@ const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/taskma
 const connectDB = async () => {
   if (mongoose.connection.readyState >= 1) return;
   try {
-    await mongoose.connect(MONGODB_URI);
+    await mongoose.connect(MONGODB_URI, {
+      serverSelectionTimeoutMS: 5000,
+    });
     console.log('MongoDB connected successfully');
   } catch (err) {
     console.error('MongoDB connection error:', err.message);
@@ -26,6 +28,11 @@ connectDB();
 
 // Middleware to ensure DB connection for serverless function requests
 app.use(async (req, res, next) => {
+  if (process.env.VERCEL && !process.env.MONGODB_URI) {
+    return res.status(503).json({
+      error: 'MongoDB Atlas URI not configured yet. Please add MONGODB_URI in your Vercel project Environment Variables.'
+    });
+  }
   await connectDB();
   next();
 });
