@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "buildCommand": "cd task-management-system/task-manager-frontend && npm install && npm run build",
+  "outputDirectory": "task-management-system/task-manager-frontend/build",
+  "rewrites": [
+    {
+      "source": "/tasks/(.*)",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/tasks",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/$1"
+    }
+  ]
+}

@@ -4,20 +4,31 @@ const cors = require('cors');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const MONGODB_URI = 'mongodb://localhost:27017/taskmanager';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/taskmanager';
+
+// MongoDB Connection
+const connectDB = async () => {
+  if (mongoose.connection.readyState >= 1) return;
+  try {
+    await mongoose.connect(MONGODB_URI);
+    console.log('MongoDB connected successfully');
+  } catch (err) {
+    console.error('MongoDB connection error:', err.message);
+  }
+};
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
-// MongoDB Connection
-mongoose.connect(MONGODB_URI)
-  .then(() => {
-    console.log('MongoDB connected successfully');
-  })
-  .catch((err) => {
-    console.error('MongoDB connection error:', err.message);
-  });
+// Initiate connection
+connectDB();
+
+// Middleware to ensure DB connection for serverless function requests
+app.use(async (req, res, next) => {
+  await connectDB();
+  next();
+});
 
 // Task Schema and Model
 const taskSchema = new mongoose.Schema(
@@ -140,7 +151,11 @@ app.delete('/tasks/:id', async (req, res) => {
   }
 });
 
-// Start Express server
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// Start Express server when run directly
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
+
+module.exports = app;
