@@ -4,6 +4,12 @@ A complete full-stack **Project Task Management System** developed using the MER
 
 ---
 
+## 🌐 Live Production URL
+
+- **Deployed Application**: [https://project-task-manager-gules.vercel.app](https://project-task-manager-gules.vercel.app)
+- **Hosting Platform**: Vercel
+- **GitHub Repository**: [https://github.com/deekshikhaarun0604/projectmanager](https://github.com/deekshikhaarun0604/projectmanager)
+
 ## 📁 Project Structure
 
 ```
